@@ -15,10 +15,14 @@ export default function DashboardLayout({
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
     { href: '/mock-interview', label: 'Mock Interview', icon: '🎤' },
+    { href: '/interview-history', label: 'Interview History', icon: '📋' },
     { href: '/resume-analyzer', label: 'Resume Analyzer', icon: '📄' },
+    { href: '/coding-tracker', label: 'Coding Tracker', icon: '💻' },
     { href: '/analytics', label: 'Analytics', icon: '📈' },
-    { href: '/settings', label: 'Settings', icon: '⚙️' },
+    { href: '/study-planner', label: 'Study Planner', icon: '📚' },
+    { href: '/ai-coach', label: 'AI Coach', icon: '🤖' },
     { href: '/profile', label: 'Profile', icon: '👤' },
+    { href: '/settings', label: 'Settings', icon: '⚙️' },
   ];
 
   const isActive = (href: string) => {
