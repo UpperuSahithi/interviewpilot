@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { LogIn } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -15,12 +19,9 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
-    // TODO: Replace with actual API call
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('Login attempt:', { email, password, rememberMe });
-      // Redirect to dashboard on success
       window.location.href = '/dashboard';
     } catch (err) {
       setError('Failed to login. Please try again.');
@@ -31,44 +32,33 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-foreground mb-6">Sign In</h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">Sign In</h2>
+        <p className="text-sm text-muted mt-1">Welcome back! Enter your credentials.</p>
+      </div>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-          {error}
-        </div>
-      )}
+      {error && <Alert className="mb-4">{error}</Alert>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="you@example.com"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <Input
+          label="Email Address"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="you@example.com"
+        />
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="••••••••"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
+        <Input
+          label="Password"
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          placeholder="••••••••"
+        />
 
         <div className="flex items-center">
           <input
@@ -76,34 +66,27 @@ export default function LoginPage() {
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            className="h-4 w-4 rounded border-border text-primary focus:ring-primary/30"
           />
-          <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-700">
+          <label htmlFor="rememberMe" className="ml-2.5 text-sm text-muted">
             Remember me
           </label>
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 rounded-lg transition-colors duration-200"
-        >
+        <Button type="submit" loading={isLoading} className="w-full" icon={!isLoading ? <LogIn className="w-4 h-4" /> : undefined}>
           {isLoading ? 'Signing in...' : 'Sign In'}
-        </button>
+        </Button>
       </form>
 
       <div className="mt-6 space-y-3 text-center text-sm">
         <div>
-          <Link
-            href="/auth/forgot-password"
-            className="text-blue-600 hover:text-blue-700 font-medium"
-          >
+          <Link href="/auth/forgot-password" className="text-primary hover:text-primary-dark font-medium transition-colors">
             Forgot your password?
           </Link>
         </div>
-        <div className="text-gray-600">
+        <div className="text-muted">
           Don&apos;t have an account?{' '}
-          <Link href="/auth/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+          <Link href="/auth/signup" className="text-primary hover:text-primary-dark font-medium transition-colors">
             Sign Up
           </Link>
         </div>

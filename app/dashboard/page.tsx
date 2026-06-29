@@ -1,13 +1,19 @@
 'use client';
 
 import Link from 'next/link';
+import { Mic, Star, FileText, Flame, ChevronRight, ArrowRight } from 'lucide-react';
+import { PageHeader } from '@/components/ui/page-header';
+import { StatCard } from '@/components/ui/stat-card';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { pageStack } from '@/lib/styles';
+import { cn } from '@/lib/utils';
 
 export default function DashboardPage() {
   const stats = [
-    { label: 'Interviews Completed', value: '12', icon: '🎤', color: 'bg-blue-50' },
-    { label: 'Average Score', value: '78%', icon: '⭐', color: 'bg-green-50' },
-    { label: 'Resumes Analyzed', value: '5', icon: '📄', color: 'bg-purple-50' },
-    { label: 'Streak', value: '7 days', icon: '🔥', color: 'bg-orange-50' },
+    { label: 'Interviews Completed', value: '12', icon: Mic, trend: '+3 this week', iconVariant: 'primary' as const },
+    { label: 'Average Score', value: '78%', icon: Star, trend: '+5% improvement', iconVariant: 'success' as const },
+    { label: 'Resumes Analyzed', value: '5', icon: FileText, trend: '2 pending review', iconVariant: 'accent' as const },
+    { label: 'Streak', value: '7 days', icon: Flame, trend: 'Keep it going!', iconVariant: 'warning' as const },
   ];
 
   const recentActivity = [
@@ -17,104 +23,80 @@ export default function DashboardPage() {
     { title: 'Analyzed Resume - v2.pdf', date: '1 week ago', type: 'resume' },
   ];
 
-  return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back!</h1>
-        <p className="text-gray-600">Ready to ace your next interview? Here&apos;s your progress.</p>
-      </div>
+  const quickActions = [
+    { href: '/mock-interview', title: 'Start Mock Interview', description: 'Practice for your next interview', icon: Mic },
+    { href: '/resume-analyzer', title: 'Analyze Resume', description: 'Optimize your resume with AI', icon: FileText },
+    { href: '/analytics', title: 'View Analytics', description: 'Track your progress over time', icon: Star },
+  ];
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className={`${stat.color} rounded-lg p-6 border border-gray-200`}
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-gray-600 text-sm font-medium mb-2">{stat.label}</p>
-                <p className="text-3xl font-bold text-foreground">{stat.value}</p>
-              </div>
-              <span className="text-3xl">{stat.icon}</span>
-            </div>
-          </div>
+  return (
+    <div className={pageStack}>
+      <PageHeader
+        title="Welcome back!"
+        description="Ready to ace your next interview? Here's your progress."
+      />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {stats.map((stat, i) => (
+          <StatCard key={stat.label} {...stat} delay={i * 40} />
         ))}
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link
-          href="/mock-interview"
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg p-6 transition-colors duration-200 flex flex-col items-center justify-center text-center gap-3"
-        >
-          <span className="text-4xl">🎤</span>
-          <div>
-            <h3 className="font-bold text-lg">Start Mock Interview</h3>
-            <p className="text-blue-100 text-sm">Practice for your next interview</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/resume-analyzer"
-          className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg p-6 transition-colors duration-200 flex flex-col items-center justify-center text-center gap-3"
-        >
-          <span className="text-4xl">📄</span>
-          <div>
-            <h3 className="font-bold text-lg">Analyze Resume</h3>
-            <p className="text-purple-100 text-sm">Optimize your resume with AI</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/analytics"
-          className="bg-green-600 hover:bg-green-700 text-white rounded-lg p-6 transition-colors duration-200 flex flex-col items-center justify-center text-center gap-3"
-        >
-          <span className="text-4xl">📈</span>
-          <div>
-            <h3 className="font-bold text-lg">View Analytics</h3>
-            <p className="text-green-100 text-sm">Track your progress over time</p>
-          </div>
-        </Link>
+        {quickActions.map((action) => {
+          const Icon = action.icon;
+          return (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="group relative overflow-hidden rounded-xl brand-gradient p-6 text-white shadow-sm transition-all duration-200 hover:shadow-md hover:brightness-110"
+            >
+              <div className="relative flex flex-col items-center text-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-base">{action.title}</h3>
+                  <p className="text-white/75 text-sm mt-0.5">{action.description}</p>
+                </div>
+                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden />
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-foreground">Recent Activity</h2>
-        </div>
-        <div className="divide-y divide-gray-200">
+      <Card hover={false} padding="none" className="overflow-hidden">
+        <CardHeader className="px-5 py-4 border-b border-border">
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <div className="divide-y divide-border">
           {recentActivity.map((activity, index) => (
-            <div key={index} className="px-6 py-4 hover:bg-gray-50 transition-colors duration-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <span className="text-2xl">
-                    {activity.type === 'interview' ? '🎤' : '📄'}
-                  </span>
-                  <div>
-                    <p className="font-medium text-foreground">{activity.title}</p>
-                    <p className="text-sm text-gray-600">{activity.date}</p>
-                  </div>
+            <div
+              key={index}
+              className="group flex items-center justify-between px-5 py-3.5 hover:bg-muted-light/50 transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className={cn(
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl',
+                  activity.type === 'interview' ? 'bg-primary-light' : 'bg-accent-light'
+                )}>
+                  {activity.type === 'interview' ? (
+                    <Mic className="w-4 h-4 text-primary" aria-hidden />
+                  ) : (
+                    <FileText className="w-4 h-4 text-accent" aria-hidden />
+                  )}
                 </div>
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground text-sm truncate">{activity.title}</p>
+                  <p className="text-xs text-muted mt-0.5">{activity.date}</p>
+                </div>
               </div>
+              <ChevronRight className="w-4 h-4 text-muted group-hover:text-foreground transition-colors shrink-0" aria-hidden />
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

@@ -47,49 +47,39 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="py-20 px-6">
-      <div className="max-w-7xl mx-auto">
+    <section id="features" className="py-24 px-6 relative">
+      <div className="absolute inset-0 bg-gradient-glow pointer-events-none" />
+      <div className="max-w-7xl mx-auto relative">
         <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+          <p className="text-sm font-semibold uppercase tracking-wider text-primary">Features</p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Powerful Features
           </h2>
-          <p className="text-xl text-muted max-w-2xl mx-auto">
+          <p className="text-lg text-muted max-w-2xl mx-auto">
             Everything you need to master interviews and land your dream job
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
               <div
                 key={feature.id}
-                className="group relative bg-card-bg border border-border rounded-xl p-8 hover:border-primary transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                className="group relative bg-card border border-border rounded-2xl p-7 hover:border-border-subtle transition-all duration-300 hover:shadow-lg hover:-translate-y-1 card-gradient"
               >
-                {/* Gradient background on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 rounded-xl transition-opacity" />
-
                 <div className="relative space-y-4">
-                  {/* Icon */}
-                  <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${feature.color}`}>
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.color} shadow-sm`}>
+                    <Icon className="w-5 h-5 text-white" />
                   </div>
-
-                  {/* Content */}
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold text-foreground">
-                      {feature.title}
-                    </h3>
-                    <p className="text-muted leading-relaxed">
-                      {feature.description}
-                    </p>
+                    <h3 className="text-lg font-semibold text-foreground">{feature.title}</h3>
+                    <p className="text-muted text-sm leading-relaxed">{feature.description}</p>
                   </div>
-
-                  {/* Arrow */}
-                  <div className="pt-2">
-                    <div className="inline-flex items-center gap-1 text-primary font-semibold group-hover:gap-3 transition-all">
+                  <div className="pt-1">
+                    <div className="inline-flex items-center gap-1 text-primary text-sm font-medium group-hover:gap-2 transition-all">
                       Learn more
-                      <span className="text-xl">→</span>
+                      <span>→</span>
                     </div>
                   </div>
                 </div>

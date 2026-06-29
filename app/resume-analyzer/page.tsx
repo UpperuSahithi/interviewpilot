@@ -1,6 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  BarChart3,
+  Lightbulb,
+  Search,
+  Upload,
+  CheckCircle,
+  AlertTriangle,
+  Download,
+  RotateCcw,
+  FileText,
+  Sparkles,
+  Target,
+  Zap,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ProgressBar } from '@/components/ui/progress-bar';
+import { cn } from '@/lib/utils';
+import { PageAtmosphere } from '@/components/premium/page-atmosphere';
+import { GlassCard } from '@/components/premium/glass-card';
+import { CircularScore } from '@/components/premium/circular-score';
 
 export default function ResumeAnalyzerPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -11,18 +33,14 @@ export default function ResumeAnalyzerPage() {
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
+    if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
+    else if (e.type === 'dragleave') setDragActive(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setUploadedFile(e.dataTransfer.files[0]);
     }
@@ -36,219 +54,242 @@ export default function ResumeAnalyzerPage() {
 
   const handleAnalyze = async () => {
     if (!uploadedFile) return;
-    
     setAnalyzing(true);
-    // Simulate analysis
     await new Promise(resolve => setTimeout(resolve, 2000));
     setAnalyzing(false);
     setAnalysisComplete(true);
   };
 
+  const pageWrap = 'relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-8';
+  const container = 'relative max-w-7xl mx-auto space-y-16 md:space-y-24';
+
   if (analysisComplete && uploadedFile) {
     return (
-      <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Resume Analysis</h1>
-          <p className="text-gray-600">AI-powered insights to improve your resume</p>
-        </div>
+      <div className={pageWrap}>
+        <PageAtmosphere />
+        <div className={cn(container, 'pt-4 md:pt-8')}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Analysis Complete</p>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">Resume Analysis</h1>
+            <p className="text-muted">AI-powered insights for <span className="text-foreground font-medium">{uploadedFile.name}</span></p>
+          </motion.div>
 
-        {/* Overall Score */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200 p-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-gray-700 mb-2">Overall ATS Score</h2>
-              <p className="text-gray-600 text-sm">How well your resume will be parsed by Applicant Tracking Systems</p>
+          <GlassCard className="p-8 sm:p-10">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
+              <div className="text-center sm:text-left">
+                <h2 className="text-lg font-semibold text-foreground mb-1">Overall ATS Score</h2>
+                <p className="text-sm text-muted max-w-sm">How well your resume will be parsed by Applicant Tracking Systems</p>
+              </div>
+              <CircularScore value={82} size={120} strokeWidth={8} />
             </div>
-            <div className="text-6xl font-bold text-blue-600">82</div>
-          </div>
-          <div className="w-full bg-gray-300 rounded-full h-3 mt-6">
-            <div className="bg-blue-600 h-3 rounded-full" style={{ width: '82%' }}></div>
-          </div>
-        </div>
+            <ProgressBar value={82} size="lg" className="mt-8" />
+          </GlassCard>
 
-        {/* Analysis Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Strengths */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">✓</span>
-              <h3 className="text-xl font-bold text-foreground">Strengths</h3>
-            </div>
-            <ul className="space-y-3">
-              <li className="flex gap-3">
-                <span className="text-green-600 font-bold">•</span>
-                <span className="text-gray-700">Clear job titles and company names</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-green-600 font-bold">•</span>
-                <span className="text-gray-700">Quantifiable achievements included</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-green-600 font-bold">•</span>
-                <span className="text-gray-700">Good use of action verbs</span>
-              </li>
-            </ul>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <GlassCard className="p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <CheckCircle className="w-5 h-5 text-success" aria-hidden />
+                <h3 className="font-semibold text-foreground">Strengths</h3>
+              </div>
+              <ul className="space-y-3">
+                {['Clear job titles and company names', 'Quantifiable achievements included', 'Good use of action verbs'].map((item) => (
+                  <li key={item} className="flex gap-3 text-sm text-muted">
+                    <span className="text-success shrink-0">✓</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </GlassCard>
+            <GlassCard className="p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <AlertTriangle className="w-5 h-5 text-warning" aria-hidden />
+                <h3 className="font-semibold text-foreground">Areas for Improvement</h3>
+              </div>
+              <ul className="space-y-3">
+                {['Add more metrics and percentages', 'Include relevant keywords from job descriptions', 'Expand on technical skills section'].map((item) => (
+                  <li key={item} className="flex gap-3 text-sm text-muted">
+                    <span className="text-warning shrink-0">!</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </GlassCard>
           </div>
 
-          {/* Areas for Improvement */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">⚠️</span>
-              <h3 className="text-xl font-bold text-foreground">Areas for Improvement</h3>
+          <GlassCard className="p-6 sm:p-8">
+            <h3 className="font-semibold text-foreground mb-6">Recommendations</h3>
+            <div className="space-y-4">
+              {[
+                { title: 'Use Specific Metrics', desc: 'Replace vague descriptions with numbers. Instead of "increased sales," write "increased sales by 35% ($2M ARR)"' },
+                { title: 'Keyword Optimization', desc: 'Add keywords from your target job postings to improve ATS parsing and recruiter searches' },
+                { title: 'Use Strong Action Verbs', desc: 'Replace weak verbs like "responsible for" with strong ones like "led," "built," or "accelerated"' },
+              ].map((rec) => (
+                <div key={rec.title} className="rounded-2xl border-l-2 border-primary bg-primary-light/30 pl-5 py-3">
+                  <h4 className="font-medium text-foreground text-sm">{rec.title}</h4>
+                  <p className="text-muted text-sm mt-1">{rec.desc}</p>
+                </div>
+              ))}
             </div>
-            <ul className="space-y-3">
-              <li className="flex gap-3">
-                <span className="text-orange-600 font-bold">•</span>
-                <span className="text-gray-700">Add more metrics and percentages</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-orange-600 font-bold">•</span>
-                <span className="text-gray-700">Include relevant keywords from job descriptions</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-orange-600 font-bold">•</span>
-                <span className="text-gray-700">Expand on technical skills section</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+          </GlassCard>
 
-        {/* Detailed Recommendations */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-xl font-bold text-foreground mb-4">Recommendations</h3>
-          <div className="space-y-4">
-            <div className="border-l-4 border-blue-600 pl-4 py-2">
-              <h4 className="font-bold text-foreground">Use Specific Metrics</h4>
-              <p className="text-gray-600 text-sm mt-1">Replace vague descriptions with numbers. Instead of &quot;increased sales,&quot; write &quot;increased sales by 35% ($2M ARR)&quot;</p>
+          <GlassCard className="p-6">
+            <h3 className="font-semibold text-foreground mb-4">Keywords Detected</h3>
+            <div className="flex flex-wrap gap-2">
+              {['Leadership', 'Project Management', 'Python', 'AWS', 'Data Analysis', 'Agile', 'Communication', 'Problem Solving'].map((keyword) => (
+                <Badge key={keyword} variant="info">{keyword}</Badge>
+              ))}
             </div>
-            <div className="border-l-4 border-blue-600 pl-4 py-2">
-              <h4 className="font-bold text-foreground">Keyword Optimization</h4>
-              <p className="text-gray-600 text-sm mt-1">Add keywords from your target job postings to improve ATS parsing and recruiter searches</p>
-            </div>
-            <div className="border-l-4 border-blue-600 pl-4 py-2">
-              <h4 className="font-bold text-foreground">Use Strong Action Verbs</h4>
-              <p className="text-gray-600 text-sm mt-1">Replace weak verbs like &quot;responsible for&quot; with strong ones like &quot;led,&quot; &quot;built,&quot; or &quot;accelerated&quot;</p>
-            </div>
-          </div>
-        </div>
+          </GlassCard>
 
-        {/* Keywords Found */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-xl font-bold text-foreground mb-4">Keywords Detected</h3>
-          <div className="flex flex-wrap gap-2">
-            {['Leadership', 'Project Management', 'Python', 'AWS', 'Data Analysis', 'Agile', 'Communication', 'Problem Solving'].map((keyword) => (
-              <span key={keyword} className="px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-sm text-blue-700 font-medium">
-                {keyword}
-              </span>
-            ))}
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Button icon={<Download className="w-4 h-4" />}>Download Report (PDF)</Button>
+            <Button
+              variant="outline"
+              icon={<RotateCcw className="w-4 h-4" />}
+              onClick={() => { setAnalysisComplete(false); setUploadedFile(null); }}
+            >
+              Analyze Another Resume
+            </Button>
           </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-4">
-          <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200">
-            Download Report (PDF)
-          </button>
-          <button
-            onClick={() => {
-              setAnalysisComplete(false);
-              setUploadedFile(null);
-            }}
-            className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg font-medium transition-colors duration-200"
-          >
-            Analyze Another Resume
-          </button>
         </div>
       </div>
     );
   }
 
+  const features = [
+    { icon: BarChart3, title: 'ATS Score', description: 'See how well your resume parses through applicant tracking systems', stat: '82% avg' },
+    { icon: Lightbulb, title: 'Personalized Tips', description: 'Get specific, actionable recommendations to improve your resume', stat: '12+ tips' },
+    { icon: Search, title: 'Keyword Analysis', description: 'Find keywords that match your industry and target job roles', stat: '50+ keywords' },
+  ];
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Resume Analyzer</h1>
-        <p className="text-gray-600">Get AI-powered feedback to optimize your resume for ATS and recruiters</p>
-      </div>
-
-      {/* Features */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <span className="text-3xl mb-2 block">📊</span>
-          <h3 className="font-bold text-foreground mb-1">ATS Score</h3>
-          <p className="text-sm text-gray-600">See how well your resume will be parsed by Applicant Tracking Systems</p>
-        </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <span className="text-3xl mb-2 block">💡</span>
-          <h3 className="font-bold text-foreground mb-1">Personalized Tips</h3>
-          <p className="text-sm text-gray-600">Get specific recommendations to improve your resume</p>
-        </div>
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-          <span className="text-3xl mb-2 block">🔍</span>
-          <h3 className="font-bold text-foreground mb-1">Keyword Analysis</h3>
-          <p className="text-sm text-gray-600">Find keywords that match your industry and job roles</p>
-        </div>
-      </div>
-
-      {/* Upload Section */}
-      <div className="bg-white rounded-lg border border-gray-200 p-8">
-        <label
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          className={`block cursor-pointer transition-all duration-200 ${
-            dragActive
-              ? 'bg-blue-50 border-2 border-blue-400'
-              : 'bg-gray-50 border-2 border-dashed border-gray-300 hover:border-blue-400'
-          }`}
+    <div className={pageWrap}>
+      <PageAtmosphere />
+      <div className={container}>
+        {/* Hero */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-4 md:pt-8"
         >
-          <div className="p-12 text-center">
-            <svg
-              className="mx-auto h-16 w-16 text-gray-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33A3 3 0 0116.5 19.5H6.75z"
-              />
-            </svg>
-            {uploadedFile ? (
-              <div>
-                <p className="text-lg font-medium text-foreground mb-2">{uploadedFile.name}</p>
-                <p className="text-sm text-gray-600 mb-4">Ready to analyze</p>
-              </div>
-            ) : (
-              <div>
-                <p className="text-lg font-medium text-foreground mb-2">Drag and drop your resume here</p>
-                <p className="text-sm text-gray-600">or click to browse files</p>
-              </div>
-            )}
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileChange}
-              className="hidden"
-            />
+          <div className="space-y-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">AI Resume Intelligence</p>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground leading-tight">
+              Optimize Your Resume for{' '}
+              <span className="brand-gradient-text">ATS & Recruiters</span>
+            </h1>
+            <p className="text-base text-muted leading-relaxed max-w-xl">
+              Upload your resume and receive instant ATS scoring, keyword analysis, and personalized recommendations to land more interviews.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { icon: Target, text: 'ATS-Optimized' },
+                { icon: Zap, text: 'Instant Analysis' },
+                { icon: Sparkles, text: 'AI-Powered' },
+              ].map((b) => (
+                <GlassCard key={b.text} className="px-4 py-2 flex items-center gap-2 text-sm font-medium">
+                  <b.icon className="w-4 h-4 text-primary" aria-hidden />
+                  {b.text}
+                </GlassCard>
+              ))}
+            </div>
           </div>
-        </label>
-      </div>
 
-      {/* Analyze Button */}
-      {uploadedFile && (
-        <button
-          onClick={handleAnalyze}
-          disabled={analyzing}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 rounded-lg transition-colors duration-200"
-        >
-          {analyzing ? 'Analyzing your resume...' : 'Analyze Resume'}
-        </button>
-      )}
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+            className="hidden sm:flex items-center justify-center"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 brand-gradient opacity-20 blur-3xl rounded-full scale-150" aria-hidden />
+              <GlassCard className="p-10 relative">
+                <FileText className="w-16 h-16 text-primary mx-auto mb-4" aria-hidden />
+                <p className="text-center text-sm text-muted">Drop your resume to begin</p>
+              </GlassCard>
+            </div>
+          </motion.div>
+        </motion.section>
+
+        {/* Features */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {features.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+              >
+                <GlassCard hover className="p-6 h-full">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl brand-gradient mb-4">
+                    <Icon className="w-5 h-5 text-white" aria-hidden />
+                  </div>
+                  <h3 className="font-semibold text-foreground mb-1">{f.title}</h3>
+                  <p className="text-sm text-muted mb-3 leading-relaxed">{f.description}</p>
+                  <p className="text-xs font-semibold text-primary">{f.stat}</p>
+                </GlassCard>
+              </motion.div>
+            );
+          })}
+        </section>
+
+        {/* Upload */}
+        <section className="flex justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="w-full max-w-2xl"
+          >
+            <GlassCard className="p-2">
+              <label
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                className={cn(
+                  'block cursor-pointer rounded-3xl border-2 border-dashed transition-all duration-300',
+                  dragActive
+                    ? 'border-primary bg-primary-light/50 scale-[1.01]'
+                    : 'border-border/60 hover:border-primary/40 hover:bg-muted-light/20'
+                )}
+              >
+                <div className="p-12 sm:p-16 text-center">
+                  <motion.div
+                    animate={dragActive ? { scale: 1.05 } : { scale: 1 }}
+                    className={cn(
+                      'flex h-20 w-20 items-center justify-center rounded-3xl mx-auto mb-6 transition-colors',
+                      dragActive ? 'bg-primary-light' : 'bg-muted-light'
+                    )}
+                  >
+                    <Upload className={cn('h-9 w-9', dragActive ? 'text-primary' : 'text-muted')} aria-hidden />
+                  </motion.div>
+                  {uploadedFile ? (
+                    <div>
+                      <p className="text-lg font-semibold text-foreground mb-1">{uploadedFile.name}</p>
+                      <p className="text-sm text-muted">Ready to analyze</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-lg font-semibold text-foreground mb-1">Drag and drop your resume</p>
+                      <p className="text-sm text-muted">PDF, DOC, or DOCX — up to 10MB</p>
+                    </div>
+                  )}
+                  <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="hidden" />
+                </div>
+              </label>
+            </GlassCard>
+
+            {uploadedFile && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
+                <Button onClick={handleAnalyze} loading={analyzing} className="w-full" size="lg" icon={<Sparkles className="w-4 h-4" />}>
+                  {analyzing ? 'Analyzing your resume...' : 'Analyze Resume'}
+                </Button>
+              </motion.div>
+            )}
+          </motion.div>
+        </section>
+      </div>
     </div>
   );
 }

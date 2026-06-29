@@ -1,44 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Sparkles, Plus, Download, Calendar, CheckCircle2, Target, BookOpen, Zap } from 'lucide-react';
+import { ProgressBar } from '@/components/ui/progress-bar';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { PageAtmosphere } from '@/components/premium/page-atmosphere';
+import { GlassCard } from '@/components/premium/glass-card';
+import { CircularScore } from '@/components/premium/circular-score';
 
 const mockTasks = [
-  {
-    id: 1,
-    title: 'Practice Array Problems',
-    topic: 'Data Structures',
-    duration: '60 min',
-    priority: 'high',
-    completed: true,
-    dueDate: '2024-01-15',
-  },
-  {
-    id: 2,
-    title: 'System Design: Load Balancing',
-    topic: 'System Design',
-    duration: '90 min',
-    priority: 'high',
-    completed: false,
-    dueDate: '2024-01-15',
-  },
-  {
-    id: 3,
-    title: 'Mock Interview - Senior Role',
-    topic: 'Interview Practice',
-    duration: '45 min',
-    priority: 'high',
-    completed: false,
-    dueDate: '2024-01-15',
-  },
-  {
-    id: 4,
-    title: 'Review Weak Topics',
-    topic: 'Review',
-    duration: '45 min',
-    priority: 'medium',
-    completed: false,
-    dueDate: '2024-01-16',
-  },
+  { id: 1, title: 'Practice Array Problems', topic: 'Data Structures', duration: '60 min', priority: 'high', completed: true, dueDate: '2024-01-15' },
+  { id: 2, title: 'System Design: Load Balancing', topic: 'System Design', duration: '90 min', priority: 'high', completed: false, dueDate: '2024-01-15' },
+  { id: 3, title: 'Mock Interview - Senior Role', topic: 'Interview Practice', duration: '45 min', priority: 'high', completed: false, dueDate: '2024-01-15' },
+  { id: 4, title: 'Review Weak Topics', topic: 'Review', duration: '45 min', priority: 'medium', completed: false, dueDate: '2024-01-16' },
 ];
 
 const mockWeeklyGoals = [
@@ -59,172 +36,209 @@ const mockSuggestedPlan = [
   { time: '02:00 PM', activity: 'Review & Consolidate Learning', duration: '30 min' },
 ];
 
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'high':
-      return 'bg-red-100 text-red-700 border-l-4 border-red-600';
-    case 'medium':
-      return 'bg-yellow-100 text-yellow-700 border-l-4 border-yellow-600';
-    case 'low':
-      return 'bg-green-100 text-green-700 border-l-4 border-green-600';
-    default:
-      return 'bg-gray-100 text-gray-700 border-l-4 border-gray-600';
-  }
+const priorityBorder = (p: string) => {
+  if (p === 'high') return 'border-l-danger';
+  if (p === 'medium') return 'border-l-warning';
+  return 'border-l-success';
 };
 
 export default function StudyPlannerPage() {
-  const [completedTasks, setCompletedTasks] = useState(
-    mockTasks.filter(t => t.completed).map(t => t.id)
-  );
+  const [completedTasks, setCompletedTasks] = useState(mockTasks.filter(t => t.completed).map(t => t.id));
 
   const toggleTask = (taskId: number) => {
-    setCompletedTasks(prev =>
-      prev.includes(taskId) ? prev.filter(id => id !== taskId) : [...prev, taskId]
-    );
+    setCompletedTasks(prev => prev.includes(taskId) ? prev.filter(id => id !== taskId) : [...prev, taskId]);
   };
 
   const completedCount = completedTasks.length;
   const totalTasks = mockTasks.length;
-  const completionPercentage = (completedCount / totalTasks) * 100;
+  const completionPercentage = Math.round((completedCount / totalTasks) * 100);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Study Planner</h1>
-        <p className="text-gray-600">Organize your interview preparation journey</p>
-      </div>
+    <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-8">
+      <PageAtmosphere />
 
-      {/* Daily Progress */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold">Today&apos;s Progress</h2>
-          <span className="text-3xl font-bold">{completedCount}/{totalTasks}</span>
-        </div>
-        <div className="w-full bg-blue-400 rounded-full h-3 overflow-hidden">
-          <div
-            className="bg-white h-full transition-all duration-300"
-            style={{ width: `${completionPercentage}%` }}
-          ></div>
-        </div>
-        <div className="mt-3 text-sm text-blue-100">
-          {completionPercentage === 100 ? '🎉 Great job! All tasks completed!' : `${Math.round(completionPercentage)}% complete`}
-        </div>
-      </div>
-
-      {/* Weekly Goals */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-4">This Week&apos;s Goals</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {mockWeeklyGoals.map((item, idx) => (
-            <div key={idx} className="bg-card-bg border border-border rounded-lg p-4">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-semibold text-foreground">{item.goal}</h3>
-                <span className="text-sm font-bold text-blue-600">{item.progress}%</span>
-              </div>
-              <div className="w-full bg-muted-light rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-blue-500 h-full transition-all duration-300"
-                  style={{ width: `${item.progress}%` }}
-                ></div>
-              </div>
+      <div className="relative max-w-7xl mx-auto space-y-16 md:space-y-24">
+        {/* Hero */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pt-4 md:pt-8"
+        >
+          <div className="space-y-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Smart Planning</p>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground leading-tight">
+              Your AI-Powered{' '}
+              <span className="brand-gradient-text">Study Planner</span>
+            </h1>
+            <p className="text-base text-muted leading-relaxed max-w-xl">
+              Organize your interview preparation journey with daily tasks, weekly goals, and an AI-optimized study schedule.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { icon: Target, text: '4 Tasks Today' },
+                { icon: BookOpen, text: '4 Weekly Goals' },
+                { icon: Zap, text: 'AI Schedule' },
+              ].map((b) => (
+                <GlassCard key={b.text} className="px-4 py-2 flex items-center gap-2 text-sm font-medium">
+                  <b.icon className="w-4 h-4 text-primary" aria-hidden />
+                  {b.text}
+                </GlassCard>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Today's Tasks */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-4">Today&apos;s Tasks</h2>
-        <div className="space-y-3">
-          {mockTasks.map(task => (
-            <div
-              key={task.id}
-              className={`rounded-lg p-4 flex items-center gap-4 cursor-pointer transition-all ${getPriorityColor(task.priority)} ${
-                completedTasks.includes(task.id) ? 'opacity-60' : ''
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={completedTasks.includes(task.id)}
-                onChange={() => toggleTask(task.id)}
-                className="w-5 h-5 cursor-pointer"
-              />
-              <div className="flex-1">
-                <h3 className={`font-semibold ${completedTasks.includes(task.id) ? 'line-through' : ''}`}>
-                  {task.title}
-                </h3>
-                <div className="flex gap-3 mt-1 text-xs opacity-75">
-                  <span>{task.topic}</span>
-                  <span>⏱ {task.duration}</span>
-                </div>
-              </div>
-              <span className="text-xs font-bold px-2 py-1 bg-white bg-opacity-30 rounded">
-                {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* AI Suggested Study Plan */}
-      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-foreground mb-4">✨ AI Suggested Study Plan</h2>
-        <p className="text-gray-600 mb-4">Optimized daily schedule based on your goals and progress</p>
-        <div className="space-y-3">
-          {mockSuggestedPlan.map((slot, idx) => (
-            <div key={idx} className="flex gap-4 items-start bg-white p-3 rounded-lg border border-blue-100">
-              <div className="font-bold text-blue-600 min-w-[100px]">{slot.time}</div>
-              <div className="flex-1">
-                <div className="font-semibold text-foreground">{slot.activity}</div>
-                <div className="text-sm text-gray-600">{slot.duration}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Calendar View */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-4">Calendar View</h2>
-        <div className="bg-card-bg border border-border rounded-lg p-6">
-          <div className="grid grid-cols-7 gap-2 text-center">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-              <div key={day} className="font-semibold text-gray-600 py-2">
-                {day}
-              </div>
-            ))}
-            {Array.from({ length: 35 }).map((_, idx) => {
-              const date = idx + 1;
-              const isPast = idx < 15;
-              const isToday = idx === 14;
-              return (
-                <div
-                  key={idx}
-                  className={`aspect-square flex items-center justify-center rounded-lg border ${
-                    isToday
-                      ? 'bg-primary text-white border-primary font-bold'
-                      : isPast
-                      ? 'bg-green-100 text-green-700 border-green-200'
-                      : 'bg-muted-light border-border'
-                  }`}
-                >
-                  {date <= 28 ? date : ''}
-                </div>
-              );
-            })}
           </div>
-        </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <button className="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg font-semibold transition-colors">
-          Create Custom Plan
-        </button>
-        <button className="px-6 py-3 border border-border text-foreground hover:bg-muted-light rounded-lg font-semibold transition-colors">
-          Export Schedule
-        </button>
+          <GlassCard className="p-8">
+            <div className="flex items-center justify-between gap-6">
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold text-foreground mb-1">Today&apos;s Progress</h2>
+                <p className="text-sm text-muted mb-4">
+                  {completionPercentage === 100 ? 'All tasks completed!' : `${completionPercentage}% complete`}
+                </p>
+                <div className="text-3xl font-semibold tabular-nums text-foreground">
+                  {completedCount}<span className="text-muted text-xl">/{totalTasks}</span>
+                </div>
+              </div>
+              <CircularScore value={completionPercentage} size={120} strokeWidth={8} />
+            </div>
+          </GlassCard>
+        </motion.section>
+
+        {/* Weekly goals */}
+        <section>
+          <h2 className="text-xl font-semibold text-foreground mb-6">This Week&apos;s Goals</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {mockWeeklyGoals.map((item, i) => (
+              <motion.div
+                key={item.goal}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+              >
+                <GlassCard hover className="p-5">
+                  <div className="flex justify-between items-start gap-3 mb-3">
+                    <h3 className="font-medium text-foreground text-sm leading-snug">{item.goal}</h3>
+                    <span className="text-sm font-semibold gradient-text tabular-nums shrink-0">{item.progress}%</span>
+                  </div>
+                  <ProgressBar value={item.progress} />
+                </GlassCard>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Two column: tasks + AI plan */}
+        <section className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground mb-6">Today&apos;s Tasks</h2>
+            <div className="space-y-3">
+              {mockTasks.map((task, i) => (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, x: -12 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <label
+                    className={cn(
+                      'flex items-center gap-3 rounded-2xl border border-border/60 border-l-4 p-4 cursor-pointer transition-all hover:bg-muted-light/30 backdrop-blur-sm bg-card/50',
+                      priorityBorder(task.priority),
+                      completedTasks.includes(task.id) && 'opacity-60'
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={completedTasks.includes(task.id)}
+                      onChange={() => toggleTask(task.id)}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary/30 shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <span className={cn('font-medium text-foreground text-sm block', completedTasks.includes(task.id) && 'line-through')}>
+                        {task.title}
+                      </span>
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        <Badge variant="outline">{task.topic}</Badge>
+                        <Badge variant="outline">{task.duration}</Badge>
+                      </div>
+                    </div>
+                    <span className="text-xs font-medium text-muted shrink-0 tabular-nums">
+                      {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                  </label>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <motion.div initial={{ opacity: 0, x: 16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+            <GlassCard className="p-6 h-full border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-5 h-5 text-primary" aria-hidden />
+                <h2 className="text-lg font-semibold text-foreground">AI Suggested Study Plan</h2>
+              </div>
+              <p className="text-sm text-muted mb-5">Optimized daily schedule based on your goals</p>
+              <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+                {mockSuggestedPlan.map((slot, idx) => (
+                  <div key={idx} className="flex gap-3 items-start p-3 rounded-xl bg-muted-light/30 border border-border/40">
+                    <time className="font-mono text-xs font-medium text-primary min-w-[72px] pt-0.5 shrink-0">{slot.time}</time>
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground text-sm">{slot.activity}</p>
+                      <p className="text-xs text-muted mt-0.5">{slot.duration}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          </motion.div>
+        </section>
+
+        {/* Calendar */}
+        <section>
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="w-5 h-5 text-primary" aria-hidden />
+            <h2 className="text-xl font-semibold text-foreground">Calendar View</h2>
+          </div>
+          <GlassCard className="p-6">
+            <div className="grid grid-cols-7 gap-1.5 text-center">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-[11px] font-medium text-muted py-2 uppercase tracking-wider">{day}</div>
+              ))}
+              {Array.from({ length: 35 }).map((_, idx) => {
+                const date = idx + 1;
+                const isPast = idx < 15;
+                const isToday = idx === 14;
+                return (
+                  <div
+                    key={idx}
+                    className={cn(
+                      'aspect-square flex items-center justify-center rounded-xl text-sm transition-colors',
+                      isToday && 'brand-gradient text-white font-semibold shadow-sm',
+                      !isToday && isPast && 'bg-success-light text-success',
+                      !isToday && !isPast && 'bg-muted-light/40 text-muted hover:bg-muted-light/60'
+                    )}
+                  >
+                    {date <= 28 ? date : ''}
+                  </div>
+                );
+              })}
+            </div>
+          </GlassCard>
+        </section>
+
+        {/* CTA */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="rounded-3xl border border-border/50 bg-card/60 backdrop-blur-xl p-10 text-center relative overflow-hidden"
+        >
+          <div className="absolute inset-0 brand-gradient opacity-[0.06]" aria-hidden />
+          <div className="relative flex flex-wrap gap-3 justify-center">
+            <Button type="button" icon={<Plus className="w-4 h-4" />}>Create Custom Plan</Button>
+            <Button type="button" variant="outline" icon={<Download className="w-4 h-4" />}>Export Schedule</Button>
+          </div>
+        </motion.section>
       </div>
     </div>
   );

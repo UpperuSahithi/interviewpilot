@@ -10,7 +10,8 @@ import Footer from '@/components/landing/footer';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground relative">
+      <div className="absolute inset-0 bg-gradient-glow pointer-events-none" />
       <Navbar />
       <main className="flex-1">
         <Hero />

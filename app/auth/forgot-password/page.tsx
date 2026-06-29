@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Mail, CheckCircle2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -15,7 +19,6 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('Password reset requested for:', email);
       setSubmitted(true);
@@ -28,20 +31,19 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="text-center">
-        <div className="mb-4 text-5xl">✓</div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Check Your Email</h2>
-        <p className="text-gray-600 mb-6">
-          We&apos;ve sent password reset instructions to <strong>{email}</strong>
+      <div className="text-center animate-fade-in">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-success-light mx-auto mb-5">
+          <CheckCircle2 className="w-8 h-8 text-success" />
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground mb-2">Check Your Email</h2>
+        <p className="text-muted mb-2">
+          We&apos;ve sent password reset instructions to <strong className="text-foreground">{email}</strong>
         </p>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-muted/70 mb-8">
           Click the link in the email to reset your password. The link will expire in 24 hours.
         </p>
-        <Link
-          href="/auth/login"
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200"
-        >
-          Back to Sign In
+        <Link href="/auth/login">
+          <Button variant="primary">Back to Sign In</Button>
         </Link>
       </div>
     );
@@ -49,45 +51,34 @@ export default function ForgotPasswordPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-foreground mb-2">Reset Password</h2>
-      <p className="text-gray-600 text-sm mb-6">
-        Enter your email address and we&apos;ll send you a link to reset your password.
-      </p>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">Reset Password</h2>
+        <p className="text-sm text-muted mt-1">
+          Enter your email address and we&apos;ll send you a link to reset your password.
+        </p>
+      </div>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-          {error}
-        </div>
-      )}
+      {error && <Alert className="mb-4">{error}</Alert>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="you@example.com"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <Input
+          label="Email Address"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="you@example.com"
+        />
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 rounded-lg transition-colors duration-200"
-        >
+        <Button type="submit" loading={isLoading} className="w-full" icon={!isLoading ? <Mail className="w-4 h-4" /> : undefined}>
           {isLoading ? 'Sending...' : 'Send Reset Link'}
-        </button>
+        </Button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-gray-600">
+      <div className="mt-6 text-center text-sm text-muted">
         Remember your password?{' '}
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
+        <Link href="/auth/login" className="text-primary hover:text-primary-dark font-medium transition-colors">
           Sign In
         </Link>
       </div>

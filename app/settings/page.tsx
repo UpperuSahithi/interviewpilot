@@ -1,6 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Shield, Bell, Lock, Trash2, Download, Settings, Sparkles } from 'lucide-react';
+import { Input, Textarea } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/toggle';
+import { Alert } from '@/components/ui/alert';
+import { cn } from '@/lib/utils';
+import { PageAtmosphere } from '@/components/premium/page-atmosphere';
+import { GlassCard } from '@/components/premium/glass-card';
+
+const tabs = [
+  { id: 'profile', label: 'Profile', icon: User, description: 'Personal information' },
+  { id: 'security', label: 'Security', icon: Shield, description: 'Password & account' },
+  { id: 'notifications', label: 'Notifications', icon: Bell, description: 'Alerts & emails' },
+  { id: 'privacy', label: 'Privacy', icon: Lock, description: 'Data & visibility' },
+];
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -53,233 +69,162 @@ export default function SettingsPage() {
     setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
   };
 
+  const activeTabData = tabs.find(t => t.id === activeTab);
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Settings</h1>
-        <p className="text-gray-600">Manage your account and preferences</p>
-      </div>
+    <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-8">
+      <PageAtmosphere />
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200 flex gap-8">
-        {['profile', 'security', 'notifications', 'privacy'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-3 border-b-2 font-medium capitalize transition-colors duration-200 ${
-              activeTab === tab
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      <div className="relative max-w-7xl mx-auto space-y-12 md:space-y-16">
+        {/* Hero */}
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center pt-4 md:pt-8"
+        >
+          <div className="space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Account</p>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground leading-tight">
+              Settings &{' '}
+              <span className="brand-gradient-text">Preferences</span>
+            </h1>
+            <p className="text-base text-muted leading-relaxed max-w-lg">
+              Manage your account, security, notifications, and privacy settings in one place.
+            </p>
+          </div>
 
-      {/* Tab Content */}
-      <div className="max-w-2xl">
-        {/* Profile Tab */}
-        {activeTab === 'profile' && (
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-              <input
-                type="text"
-                value={profileData.fullName}
-                onChange={(e) => handleProfileChange('fullName', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+          <GlassCard className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl brand-gradient shrink-0">
+                <Settings className="w-7 h-7 text-white" aria-hidden />
+              </div>
+              <div>
+                <p className="font-semibold text-foreground">John Doe</p>
+                <p className="text-sm text-muted">john@example.com</p>
+                <p className="text-xs text-primary mt-1 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" aria-hidden />
+                  Pro Plan
+                </p>
+              </div>
             </div>
+          </GlassCard>
+        </motion.section>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-              <input
-                type="email"
-                value={profileData.email}
-                onChange={(e) => handleProfileChange('email', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
+        {/* Layout: sidebar tabs + content */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Tab navigation */}
+          <div className="lg:col-span-4 space-y-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    'w-full flex items-center gap-3 p-4 rounded-2xl text-left transition-all focus-ring',
+                    isActive
+                      ? 'brand-gradient text-white shadow-md'
+                      : 'bg-card/50 border border-border/60 hover:border-border-subtle hover:bg-muted-light/30'
+                  )}
+                >
+                  <div className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-xl shrink-0',
+                    isActive ? 'bg-white/20' : 'bg-primary-light'
+                  )}>
+                    <Icon className={cn('w-5 h-5', isActive ? 'text-white' : 'text-primary')} aria-hidden />
+                  </div>
+                  <div className="min-w-0">
+                    <p className={cn('font-medium text-sm', isActive ? 'text-white' : 'text-foreground')}>{tab.label}</p>
+                    <p className={cn('text-xs truncate', isActive ? 'text-white/70' : 'text-muted')}>{tab.description}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-              <input
-                type="tel"
-                value={profileData.phone}
-                onChange={(e) => handleProfileChange('phone', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-              <input
-                type="text"
-                value={profileData.location}
-                onChange={(e) => handleProfileChange('location', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-              <textarea
-                value={profileData.bio}
-                onChange={(e) => handleProfileChange('bio', e.target.value)}
-                rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              />
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <button
-                onClick={handleSaveProfile}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
+          {/* Tab content */}
+          <div className="lg:col-span-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -12 }}
+                transition={{ duration: 0.2 }}
               >
-                Save Changes
-              </button>
-              <button className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg font-medium transition-colors duration-200">
-                Cancel
-              </button>
-            </div>
+                <GlassCard className="p-6 sm:p-8">
+                  <h2 className="text-lg font-semibold text-foreground mb-6">{activeTabData?.label} Settings</h2>
+
+                  {activeTab === 'profile' && (
+                    <div className="space-y-4">
+                      <Input label="Full Name" type="text" value={profileData.fullName} onChange={(e) => handleProfileChange('fullName', e.target.value)} />
+                      <Input label="Email Address" type="email" value={profileData.email} onChange={(e) => handleProfileChange('email', e.target.value)} />
+                      <Input label="Phone Number" type="tel" value={profileData.phone} onChange={(e) => handleProfileChange('phone', e.target.value)} />
+                      <Input label="Location" type="text" value={profileData.location} onChange={(e) => handleProfileChange('location', e.target.value)} />
+                      <Textarea label="Bio" value={profileData.bio} onChange={(e) => handleProfileChange('bio', e.target.value)} rows={4} />
+                      <div className="flex flex-wrap gap-2 pt-4 border-t border-border/60">
+                        <Button type="button" onClick={handleSaveProfile}>Save Changes</Button>
+                        <Button type="button" variant="outline">Cancel</Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'security' && (
+                    <div className="space-y-6">
+                      <Alert variant="warning">
+                        <strong>Last login:</strong> Today at 2:30 PM from Chrome on macOS
+                      </Alert>
+                      <div className="space-y-4">
+                        <Input label="Current Password" type="password" value={passwordData.currentPassword} onChange={(e) => handlePasswordChange('currentPassword', e.target.value)} />
+                        <Input label="New Password" type="password" value={passwordData.newPassword} onChange={(e) => handlePasswordChange('newPassword', e.target.value)} />
+                        <Input label="Confirm New Password" type="password" value={passwordData.confirmPassword} onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)} />
+                        <Button type="button" onClick={handleChangePassword}>Update Password</Button>
+                      </div>
+                      <div className="pt-6 border-t border-danger/20">
+                        <h3 className="text-danger font-semibold flex items-center gap-2 mb-2">
+                          <Trash2 className="w-4 h-4" aria-hidden />
+                          Danger Zone
+                        </h3>
+                        <p className="text-sm text-muted mb-4">Once you delete your account, there is no going back.</p>
+                        <Button type="button" variant="danger">Delete Account</Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'notifications' && (
+                    <div className="space-y-3">
+                      <Toggle checked={settings.notifications} onChange={(v) => handleSettingChange('notifications', v)} label="Interview Reminders" description="Get notified when it's time for your scheduled interviews" />
+                      <Toggle checked={settings.emailUpdates} onChange={(v) => handleSettingChange('emailUpdates', v)} label="Email Updates" description="Receive weekly digest of your progress and recommendations" />
+                      <Alert variant="info" className="mt-4">Notification preferences saved automatically</Alert>
+                    </div>
+                  )}
+
+                  {activeTab === 'privacy' && (
+                    <div className="space-y-6">
+                      <Toggle checked={settings.privateProfile} onChange={(v) => handleSettingChange('privateProfile', v)} label="Private Profile" description="Hide your profile from other users on the platform" />
+                      <div className="rounded-2xl bg-muted-light/40 border border-border/40 p-5">
+                        <h3 className="font-medium text-foreground mb-3">Data & Privacy</h3>
+                        <ul className="space-y-2.5 text-sm text-muted">
+                          {['We encrypt all your personal data', 'Your interview data is never shared with third parties', 'You can download your data anytime'].map((item) => (
+                            <li key={item} className="flex gap-2 items-start">
+                              <span className="text-success shrink-0">✓</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <Button type="button" variant="secondary" icon={<Download className="w-4 h-4" />}>Download Your Data</Button>
+                    </div>
+                  )}
+                </GlassCard>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        )}
-
-        {/* Security Tab */}
-        {activeTab === 'security' && (
-          <div className="space-y-6">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
-                <strong>Last login:</strong> Today at 2:30 PM from Chrome on macOS
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-              <input
-                type="password"
-                value={passwordData.currentPassword}
-                onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-              <input
-                type="password"
-                value={passwordData.newPassword}
-                onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-              <input
-                type="password"
-                value={passwordData.confirmPassword}
-                onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <button
-                onClick={handleChangePassword}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
-              >
-                Update Password
-              </button>
-            </div>
-
-            <div className="pt-6 border-t border-gray-200">
-              <h3 className="font-bold text-foreground mb-3">Danger Zone</h3>
-              <button className="px-6 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg font-medium transition-colors duration-200">
-                Delete Account
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Notifications Tab */}
-        {activeTab === 'notifications' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div>
-                <p className="font-medium text-foreground">Interview Reminders</p>
-                <p className="text-sm text-gray-600">Get notified when it&apos;s time for your scheduled interviews</p>
-              </div>
-              <input
-                type="checkbox"
-                checked={settings.notifications}
-                onChange={(e) => handleSettingChange('notifications', e.target.checked)}
-                className="h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div>
-                <p className="font-medium text-foreground">Email Updates</p>
-                <p className="text-sm text-gray-600">Receive weekly digest of your progress and recommendations</p>
-              </div>
-              <input
-                type="checkbox"
-                checked={settings.emailUpdates}
-                onChange={(e) => handleSettingChange('emailUpdates', e.target.checked)}
-                className="h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
-                ✓ Notification preferences saved automatically
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Privacy Tab */}
-        {activeTab === 'privacy' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div>
-                <p className="font-medium text-foreground">Private Profile</p>
-                <p className="text-sm text-gray-600">Hide your profile from other users on the platform</p>
-              </div>
-              <input
-                type="checkbox"
-                checked={settings.privateProfile}
-                onChange={(e) => handleSettingChange('privateProfile', e.target.checked)}
-                className="h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-              <h3 className="font-bold text-foreground mb-4">Data & Privacy</h3>
-              <ul className="space-y-3 text-sm text-gray-700">
-                <li className="flex gap-2">
-                  <span>✓</span>
-                  <span>We encrypt all your personal data</span>
-                </li>
-                <li className="flex gap-2">
-                  <span>✓</span>
-                  <span>Your interview data is never shared with third parties</span>
-                </li>
-                <li className="flex gap-2">
-                  <span>✓</span>
-                  <span>You can download your data anytime</span>
-                </li>
-              </ul>
-            </div>
-
-            <button className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg font-medium transition-colors duration-200">
-              Download Your Data
-            </button>
-          </div>
-        )}
+        </section>
       </div>
     </div>
   );
