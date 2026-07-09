@@ -21,18 +21,6 @@ export const metadata: Metadata = {
     "interview preparation, mock interviews, resume analyzer, AI coaching, job interview prep",
 };
 
-const themeScript = `
-(function() {
-  try {
-    var stored = localStorage.getItem('theme');
-    var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var theme = dark ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.style.colorScheme = theme;
-  } catch (e) {}
-})();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,12 +33,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         suppressHydrationWarning
       >
-        <head>
-          <script
-            dangerouslySetInnerHTML={{ __html: themeScript }}
-          />
-        </head>
-
         <body className="min-h-full flex flex-col">
           <a href="#main-content" className="skip-link">
             Skip to main content
